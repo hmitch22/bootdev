@@ -4,6 +4,7 @@ from constants import (  # pyright: ignore[reportMissingImports]
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
 )
+from logger import log_state  # pyright: ignore[reportMissingImports]
 
 
 def main():
@@ -11,6 +12,18 @@ def main():
 
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    while True:
+        log_state()
+        screen.fill("black")
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
 
 
 if __name__ == "__main__":
