@@ -5,6 +5,7 @@ from constants import (  # pyright: ignore[reportMissingImports]
     SCREEN_WIDTH,
 )
 from logger import log_state  # pyright: ignore[reportMissingImports]
+from player import Player  # pyright: ignore[reportMissingImports]
 
 
 def main():
@@ -15,15 +16,24 @@ def main():
 
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock()
+    dt = 0.0
+
+    # spawn player in middle of screen
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
     while True:
         log_state()
         screen.fill("black")
-        pygame.display.flip()
+        player.draw(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+
+        # tick
+        pygame.display.flip()
+        dt = clock.tick(60) / 1000
 
 
 if __name__ == "__main__":
