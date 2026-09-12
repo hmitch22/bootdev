@@ -6,15 +6,19 @@ from circleshape import CircleShape  # pyright: ignore[reportMissingImports]
 from constants import (  # pyright: ignore[reportMissingImports]
     LINE_WIDTH,
     PLAYER_RADIUS,
+    PLAYER_SHOOT_COOLDOWN_SECONDS,
+    PLAYER_SHOOT_SPEED,
     PLAYER_SPEED,
     PLAYER_TURN_SPEED,
 )
+from shot import Shot
 
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shot_cooldown = 0
 
     def triangle(self) -> list[pygame.Vector2]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -37,6 +41,12 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
 
+        if keys[pygame.K_SPACE] and self.shot_cooldown <= 0:
+            self.shoot()
+            self.shot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+
+        self.shot_cooldown -= dt
+
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
 
@@ -49,3 +59,8 @@ class Player(CircleShape):
     @override
     def draw(self, screen: pygame.Surface) -> None:  # pyright: ignore[reportGeneralTypeIssues]
         pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+
+    def shoot(self):
+        shot = Shot(self.position[0], self.position[1])
+        shot_vector = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        shot.velocity = shot_vector
